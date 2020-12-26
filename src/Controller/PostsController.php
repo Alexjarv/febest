@@ -45,6 +45,18 @@ class PostsController extends AbstractController
     }
 
     /**
+     * @Route("/readOne/{slug}", name="api_post_read", methods={"GET"})
+     * @param $slug
+     * @return JsonResponse
+     */
+    public function readOne($slug): JsonResponse
+    {
+        $post = $this->postRepository->findOneBy(['slug' => $slug]);
+
+        return $this->json($post);
+    }
+
+    /**
      * @Route("/create", name="api_post_create", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
@@ -89,6 +101,7 @@ class PostsController extends AbstractController
         $excerpt = $excerpt . '...';
         $post->setExcerpt($excerpt);
         $slug = str_replace(' ', '-', $content->title);
+        $slug = preg_replace('/[^A-Za-z0-9\-]/', '', $slug);
         $post->setSlug($slug);
         $post->setViews(0);
         $post->setComments(0);

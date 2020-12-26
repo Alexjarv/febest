@@ -10,8 +10,13 @@ class BlogContextProvider extends React.Component {
             posts: [],
             categories: [],
             message: {},
+            post: {}
         };
-        this.readPosts();
+        if(props.slug){
+            this.readPost(props.slug);
+        } else {
+            this.readPosts();
+        }
         this.readCategories();
     }
 
@@ -49,6 +54,20 @@ class BlogContextProvider extends React.Component {
             console.error(error);
         });
     }
+
+    //read
+    readPost(slug) {
+        console.log(slug);
+        axios.get('/api/posts/readOne/'+ slug)
+            .then(response => {
+                this.setState({
+                    post: response.data,
+                });
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
     //read
     readCategories() {
         axios.get('/api/categories/read')

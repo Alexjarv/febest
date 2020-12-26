@@ -3,8 +3,8 @@ import {BlogContext} from '../contexts/BlogContextProvider';
 import {
     Avatar,
     Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Grid,
-    IconButton,
-    makeStyles,
+    IconButton, Link, ListItemIcon, ListItemText,
+    makeStyles, Menu, MenuItem,
     Table,
     TableBody,
     TableCell,
@@ -17,13 +17,23 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import CommentIcon from '@material-ui/icons/Comment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {red} from "@material-ui/core/colors";
 import clsx from "clsx";
+import {NavLink} from "react-router-dom";
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
 
+    },
+    flex: {
+        display: "flex"
+    },
+    IconNumber: {
+        fontSize: "20px",
+        marginRight: "5px"
     },
     media: {
         height: 0,
@@ -72,8 +82,17 @@ const GridMargin = withStyles({
 export default function Posts() {
 
     const context = useContext(BlogContext);
-
     const classes = useStyles();
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const onCreateSubmit = (event) => {
         event.preventDefault();
@@ -102,11 +121,32 @@ export default function Posts() {
                                 }
                                 action={
                                     <IconButton aria-label="settings">
-                                        <MoreVertIcon />
+                                        <MoreVertIcon onClick={handleClick} />
+                                        <Menu
+                                            id="long-menu"
+                                            anchorEl={anchorEl}
+                                            keepMounted
+                                            open={open}
+                                            onClose={handleClose}
+                                            PaperProps={{}}>
+                                            <MenuItem onClick={handleClose}>
+                                                <ListItemIcon>
+                                                    <EditIcon fontSize="small" />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Edit" />
+                                            </MenuItem>
+                                            <MenuItem onClick={handleClose}>
+                                                <ListItemIcon>
+                                                    <DeleteIcon fontSize="small" />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Delete" />
+                                            </MenuItem>
+                                        </Menu>
                                     </IconButton>
                                 }
                                 titleTypographyProps={{variant:'h6' }}
-                                title={post.title}
+                                title={<NavLink to={`/article/${post.slug}`}>{post.title}</NavLink>}
+
                                 subheader={post.created_at}
                             />
                             <CardMedia
@@ -121,10 +161,12 @@ export default function Posts() {
                             </CardContent>
                             <CardActions disableSpacing>
                                 <IconButton aria-label="add to favorites">
-                                    {post.likes && <Box component="span" m={1}>{post.likes}</Box>}<FavoriteIcon />
+                                    {post.likes !== 0 && <Box className={classes.IconNumber} component="span" m={1}>{post.likes}</Box>}
+                                    <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
                                 </IconButton>
-                                <IconButton aria-label="comment">
-                                    {post.comments && <Box component="span" m={1}>{post.comments}</Box>}<CommentIcon />
+                                <IconButton aria-label="comments">
+                                    {post.comments !== 0 && <Box className={classes.IconNumber} component="span" m={1}>{post.comments}</Box>}
+                                    <Link className={classes.flex} color="inherit" href={`/article/${post.slug}`}><CommentIcon /></Link>
                                 </IconButton>
                                 <IconButton
                                     className={clsx(classes.expand, {
@@ -139,7 +181,7 @@ export default function Posts() {
                             </CardActions>
                             <Collapse in={expanded} timeout="auto" unmountOnExit>
                                 <CardContent>
-                                    <Typography variant="body2" component="p">
+                                    <Typography variant="body2" color="textPrimary" component="p">
                                         {post.content}
                                     </Typography>
                                 </CardContent>

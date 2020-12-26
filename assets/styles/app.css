@@ -134,8 +134,7 @@ body {
     height: 100%
 }
 
-a:link,
-a:visited {
+a:active {
     color: #ea4c89;
     text-decoration: none;
     -webkit-transition: color 200ms ease;
@@ -148,8 +147,9 @@ a:hover {
     cursor: pointer;
 }
 
-a:active {
-    outline: none
+a:active, a:visited, a, a:hover, a:focus {
+    outline: none;
+    text-decoration: none;
 }
 
 button[type='submit'],
