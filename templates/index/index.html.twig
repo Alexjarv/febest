@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Febest Blog App{% endblock %}
+
+{% block body %}
+    <div id="root"></div>
+    {% if app.user %}
+        <span># user is logged in</span>
+    {% else %}
+        <span># user is not logged in</span>
+    {% endif %}
+{% endblock %}
