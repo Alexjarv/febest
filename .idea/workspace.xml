@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="6424f8f2-453d-449d-aaa8-b0365a82f176" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/components/Sidebar.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/logo.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Controller/CategoriesController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Controller/PostsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/bundles.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/bundles.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+    <list default="true" id="6424f8f2-453d-449d-aaa8-b0365a82f176" name="Default Changelist" comment="posts list created">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Posts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Posts.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,8 +161,23 @@
       <option name="presentableId" value="Default" />
       <updated>1608824632597</updated>
       <workItem from="1608824633690" duration="7517000" />
-      <workItem from="1608898709571" duration="19936000" />
+      <workItem from="1608898709571" duration="20112000" />
     </task>
+    <task id="LOCAL-00001" summary="posts list">
+      <created>1608947130298</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1608947130298</updated>
+    </task>
+    <task id="LOCAL-00002" summary="posts list created">
+      <created>1608947174208</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1608947174208</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -186,5 +194,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="posts list" />
+    <MESSAGE value="posts list created" />
+    <option name="LAST_COMMIT_MESSAGE" value="posts list created" />
   </component>
 </project>

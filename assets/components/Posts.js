@@ -39,6 +39,12 @@ const MarginDivider = withStyles({
     }
 })(Divider);
 
+const GridMargin = withStyles({
+    root: {
+        marginTop: "25px"
+    }
+})(Grid);
+
 export default function Posts() {
 
     const context = useContext(BlogContext);
@@ -54,7 +60,7 @@ export default function Posts() {
     };
 
     return (
-            <Grid container item xs={12} md={8} spacing={3} >
+            <GridMargin container item xs={12} md={8} spacing={3} >
                 {context.posts.slice().reverse().map((post, index) => (
                     <Grid item xs={12} key={'post' + index}>
                         <Box >
@@ -65,6 +71,6 @@ export default function Posts() {
                         <MarginDivider/>
                     </Grid>
                     ))}
-            </Grid>
+            </GridMargin>
     );
 }
