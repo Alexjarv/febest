@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -106,7 +107,7 @@ class PostsController extends AbstractController
         $post->setViews(0);
         $post->setComments(0);
         $post->setLikes(0);
-        $post->setCreatedAt(new \DateTime());
+        $post->setCreatedAt(new DateTime());
 
         try {
             $this->entityManager->persist($post);
@@ -183,11 +184,14 @@ class PostsController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="api_post_delete", methods={"DELETE"})
-     * @param Post $post
+     * @param int $id
      * @return JsonResponse
      */
-    public function delete(Post $post): JsonResponse
+    public function delete(int $id): JsonResponse
     {
+
+        $post = $this->postRepository->find($id);
+
         try {
             $this->entityManager->remove($post);
             $this->entityManager->flush();

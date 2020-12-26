@@ -1,5 +1,6 @@
 import React, {createContext} from 'react';
 import axios from 'axios';
+import {Breadcrumbs, Container, Grid, Link} from "@material-ui/core";
 
 export const BlogContext = createContext();
 
@@ -111,6 +112,7 @@ class BlogContextProvider extends React.Component {
     deletePost(data) {
         axios.delete('/api/post/delete/' + data.id)
             .then(response => {
+                console.log(response);
                 if (response.data.message.level === 'error') {
                     this.setState({
                         message: response.data.message,
@@ -143,7 +145,27 @@ class BlogContextProvider extends React.Component {
                 deletePost: this.deletePost.bind(this),
                 setMessage: (message) => this.setState({message: message}),
             }}>
-                {this.props.children}
+                    <Container maxWidth="lg">
+                        <Breadcrumbs aria-label="navigation">
+                            <Link color="inherit" href="/">
+                                Blogs
+                            </Link>
+                            {this.props.slug &&
+                                <Link
+                                    color="textPrimary"
+                                    href={`"/article/" + ${this.props.slug}`}
+                                    aria-current="page"
+                                >
+                                    {this.state.post.title}
+                                </Link>
+                            }
+
+                        </Breadcrumbs>
+                        <h1>Febest Blog</h1>
+                        <Grid container spacing={5}>
+                            {this.props.children}
+                        </Grid>
+                    </Container>
             </BlogContext.Provider>
         );
     }

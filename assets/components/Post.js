@@ -1,10 +1,10 @@
-import React, {Fragment, useContext} from 'react';
+import React, {Fragment, useContext, useState} from 'react';
 import {BlogContext} from '../contexts/BlogContextProvider';
 import {
     Avatar,
     Box, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Grid,
-    IconButton, Link,
-    makeStyles,
+    IconButton, Link, ListItemIcon, ListItemText,
+    makeStyles, Menu, MenuItem,
     Table,
     TableBody,
     TableCell,
@@ -19,11 +19,23 @@ import CommentIcon from '@material-ui/icons/Comment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {red} from "@material-ui/core/colors";
 import {NavLink} from "react-router-dom";
+import DeleteDialog from "./DeleteDialog";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
 
+    },
+    noBox: {
+        boxShadow: "unset"
+    },
+    Box: {
+        boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)"
+    },
+    commentHeader: {
+        padding: "10px"
     },
     flex: {
         display: "flex"
@@ -78,8 +90,18 @@ const GridMargin = withStyles({
 export default function Post() {
 
     const context = useContext(BlogContext);
-
     const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [postToBeDeleted, setPostToBeDeleted] = useState(null);
+    const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const onCreateSubmit = (event) => {
         event.preventDefault();
@@ -100,11 +122,37 @@ export default function Post() {
                                 </Avatar>
                             }
                             action={
-                                <IconButton aria-label="settings">
-                                    <MoreVertIcon />
-                                </IconButton>
+                                <Box>
+                                    <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
+                                        <MoreVertIcon/>
+                                    </IconButton>
+                                    <Menu
+                                        id="menu"
+                                        anchorEl={anchorEl}
+                                        keepMounted
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleClose}
+                                    >
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <EditIcon/>
+                                            </ListItemIcon>
+                                            <ListItemText primary="Edit" />
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setDeleteConfirmationIsShown(true);
+                                            setPostToBeDeleted(context.post);
+                                            handleClose();
+                                        }}>
+                                            <ListItemIcon>
+                                                <DeleteIcon/>
+                                            </ListItemIcon>
+                                            <ListItemText primary="Delete" />
+                                        </MenuItem>
+                                    </Menu>
+                                </Box>
                             }
-                            titleTypographyProps={{variant:'h6' }}
+                            titleTypographyProps={{variant:'h5' }}
                             title={<NavLink to={`/article/${context.post.slug}`}>{context.post.title}</NavLink>}
 
                             subheader={context.post.created_at}
@@ -130,6 +178,72 @@ export default function Post() {
                     </Card>
                     <MarginDivider/>
                 </Grid>
+
+                <Grid className={classes.Box} item xs={12}>
+                    <h3>Comments</h3>
+
+                    <Card className={classes.noBox}>
+                        <CardHeader
+                            className={classes.commentHeader}
+                            avatar={
+                                <Avatar aria-label="recipe" className={classes.avatar}>
+                                    A
+                                </Avatar>
+                            }
+                            action={
+                                <Box>
+                                    <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
+                                        <MoreVertIcon/>
+                                    </IconButton>
+                                    <Menu
+                                        id="menu"
+                                        anchorEl={anchorEl}
+                                        keepMounted
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleClose}
+                                    >
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <EditIcon/>
+                                            </ListItemIcon>
+                                            <ListItemText primary="Edit" />
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            handleClose();
+                                        }}>
+                                            <ListItemIcon>
+                                                <DeleteIcon/>
+                                            </ListItemIcon>
+                                            <ListItemText primary="Delete" />
+                                        </MenuItem>
+                                    </Menu>
+                                </Box>
+                            }
+                            titleTypographyProps={{variant:'h6' }}
+                            title={<NavLink to={`/user/1}`}>Anon</NavLink>}
+
+                            subheader={context.post.created_at}
+                        />
+                        <CardContent>
+                            <Typography variant="body2" component="p">
+                                {context.post.content}
+                            </Typography>
+                        </CardContent>
+                        <CardActions disableSpacing>
+                            <IconButton aria-label="add to favorites">
+                                {context.post.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.likes}</Box>}
+                                <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
+                            </IconButton>
+                        </CardActions>
+                    </Card>
+                </Grid>
+
+            {deleteConfirmationIsShown && (
+                <DeleteDialog post={postToBeDeleted}
+                              open={deleteConfirmationIsShown}
+                              setDeleteConfirmationIsShown={setDeleteConfirmationIsShown}
+                />
+            )}
         </GridMargin>
     );
 }

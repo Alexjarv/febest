@@ -11,20 +11,15 @@ import {makeStyles} from '@material-ui/core/styles';
 import Sidebar from "./Sidebar";
 import BlogContextProvider from "../contexts/BlogContextProvider";
 import Posts from "./Posts";
-import {Container, CssBaseline, Grid} from "@material-ui/core";
+import {Breadcrumbs, Container, CssBaseline, Grid, Link} from "@material-ui/core";
 import Post from "./Post";
 
 const PostsList = () => (
     <React.Fragment>
         <CssBaseline />
         <BlogContextProvider>
-            <Container maxWidth="lg">
-                <h1>Febest Blog</h1>
-                <Grid container spacing={5}>
-                    <Posts/>
-                    <Sidebar/>
-                </Grid>
-            </Container>
+            <Posts/>
+            <Sidebar/>
         </BlogContextProvider>
     </React.Fragment>
 );
@@ -50,13 +45,8 @@ function PostInner() {
             <React.Fragment>
                 <CssBaseline />
                 <BlogContextProvider slug={slug}>
-                    <Container maxWidth="lg">
-                        <h1>Febest Blog</h1>
-                        <Grid container spacing={5}>
-                            <Post/>
-                            <Sidebar/>
-                        </Grid>
-                    </Container>
+                    <Post/>
+                    <Sidebar/>
                 </BlogContextProvider>
             </React.Fragment>
     );

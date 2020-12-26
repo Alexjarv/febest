@@ -15,13 +15,15 @@ import {
 } from "@material-ui/core";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import CommentIcon from '@material-ui/icons/Comment';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CommentIcon from '@material-ui/icons/Comment';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import {red} from "@material-ui/core/colors";
 import clsx from "clsx";
 import {NavLink} from "react-router-dom";
+import DeleteDialog from "./DeleteDialog";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,8 +85,9 @@ export default function Posts() {
 
     const context = useContext(BlogContext);
     const classes = useStyles();
-
+    const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [postToBeDeleted, setPostToBeDeleted] = useState(null);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -120,29 +123,35 @@ export default function Posts() {
                                     </Avatar>
                                 }
                                 action={
-                                    <IconButton aria-label="settings">
-                                        <MoreVertIcon onClick={handleClick} />
+                                    <Box>
+                                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
+                                            <MoreVertIcon/>
+                                        </IconButton>
                                         <Menu
-                                            id="long-menu"
-                                            anchorEl={anchorEl}
-                                            keepMounted
-                                            open={open}
-                                            onClose={handleClose}
-                                            PaperProps={{}}>
+                                        id={`${index} + "menu" `}
+                                        anchorEl={anchorEl}
+                                        keepMounted
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleClose}
+                                        >
                                             <MenuItem onClick={handleClose}>
                                                 <ListItemIcon>
-                                                    <EditIcon fontSize="small" />
+                                                    <EditIcon/>
                                                 </ListItemIcon>
                                                 <ListItemText primary="Edit" />
                                             </MenuItem>
-                                            <MenuItem onClick={handleClose}>
+                                            <MenuItem onClick={() => {
+                                                setDeleteConfirmationIsShown(true);
+                                                setPostToBeDeleted(post);
+                                                handleClose();
+                                            }}>
                                                 <ListItemIcon>
-                                                    <DeleteIcon fontSize="small" />
+                                                    <DeleteIcon/>
                                                 </ListItemIcon>
                                                 <ListItemText primary="Delete" />
                                             </MenuItem>
                                         </Menu>
-                                    </IconButton>
+                                    </Box>
                                 }
                                 titleTypographyProps={{variant:'h6' }}
                                 title={<NavLink to={`/article/${post.slug}`}>{post.title}</NavLink>}
@@ -192,6 +201,15 @@ export default function Posts() {
                     </Grid>
 
                     ))}
+
+                {deleteConfirmationIsShown && (
+                    <DeleteDialog post={postToBeDeleted}
+                                  open={deleteConfirmationIsShown}
+                                  setDeleteConfirmationIsShown={setDeleteConfirmationIsShown}
+                    />
+                )}
             </GridMargin>
+
+
     );
 }
