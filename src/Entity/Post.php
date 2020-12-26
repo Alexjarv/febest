@@ -50,6 +50,11 @@ class Post
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
+    private $likes;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
     private $views;
 
     /**
@@ -144,6 +149,18 @@ class Post
         return $this;
     }
 
+    public function getLikes(): ?int
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(?int $likes): self
+    {
+        $this->likes = $likes;
+
+        return $this;
+    }
+
     public function getViews(): ?int
     {
         return $this->views;
@@ -202,6 +219,7 @@ class Post
             'excerpt' => $this->excerpt,
             'content' => $this->content,
             'comments' => $this->comments,
+            'likes' => $this->likes,
             'views' => $this->views,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

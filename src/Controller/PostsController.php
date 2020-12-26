@@ -92,6 +92,7 @@ class PostsController extends AbstractController
         $post->setSlug($slug);
         $post->setViews(0);
         $post->setComments(0);
+        $post->setLikes(0);
         $post->setCreatedAt(new \DateTime());
 
         try {
