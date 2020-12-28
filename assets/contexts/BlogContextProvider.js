@@ -24,7 +24,7 @@ class BlogContextProvider extends React.Component {
     //create
     createPost(event, post) {
         event.preventDefault();
-        axios.post('/api/post/create', post)
+        axios.post('/api/posts/create', post)
             .then(response => {
                 if (response.data.message.level === 'success') {
                     let data = [...this.state.posts];
@@ -83,7 +83,7 @@ class BlogContextProvider extends React.Component {
 
     //update
     updatePost(data) {
-        axios.put('/api/post/update/' + data.id, data)
+        axios.put('/api/posts/update/' + data.id, data)
             .then(response => {
                 if (response.data.message.level === 'error') {
                     this.setState({
@@ -110,7 +110,7 @@ class BlogContextProvider extends React.Component {
 
     //delete
     deletePost(data) {
-        axios.delete('/api/post/delete/' + data.id)
+        axios.delete('/api/posts/delete/' + data.id)
             .then(response => {
                 console.log(response);
                 if (response.data.message.level === 'error') {

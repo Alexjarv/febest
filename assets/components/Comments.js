@@ -1,5 +1,5 @@
 import React, {Fragment, useContext, useState} from 'react';
-import {BlogContext} from '../contexts/BlogContextProvider';
+import {CommentsContext} from '../contexts/CommentsContextProvider';
 import {
     Avatar,
     Box, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Grid,
@@ -15,16 +15,15 @@ import {
 } from "@material-ui/core";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import CommentIcon from '@material-ui/icons/Comment';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import AddIcon from '@material-ui/icons/Add';
 import {red} from "@material-ui/core/colors";
 import {NavLink} from "react-router-dom";
 import DeleteDialog from "./DeleteDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
 
     },
@@ -61,38 +60,34 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: red[500],
     },
 }));
-
-
-const LightGreyTextTypography = withStyles({
+withStyles({
     root: {
         color: "#c9c9cc"
     }
 })(Typography);
-
-const GreyTextTypography = withStyles({
+withStyles({
     root: {
         color: "#6e6d7a"
     }
 })(Typography);
-
-const MarginDivider = withStyles({
+withStyles({
     root: {
         marginTop: "25px"
     }
 })(Divider);
-
-const GridMargin = withStyles({
+withStyles({
     root: {
         marginTop: "25px"
     }
 })(Grid);
 
-export default function Post() {
+export default function Comments() {
 
-    const context = useContext(BlogContext);
+    const context = useContext(CommentsContext);
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
+    const [addCommentContent, setAddCommentContent] = useState('');
+
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -104,6 +99,8 @@ export default function Post() {
 
     const onCreateSubmit = (event) => {
         event.preventDefault();
+        context.createComment(event, {content: addCommentContent});
+        setAddCommentContent('');
     };
 
     const onEditSubmit = (postId, event) => {
@@ -113,66 +110,80 @@ export default function Post() {
     return (
             <Grid className={classes.Box} item xs={12}>
                 <h3>Comments</h3>
-                <Card className={classes.noBox}>
-                    <CardHeader
-                        className={classes.commentHeader}
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                A
-                            </Avatar>
-                        }
-                        action={
-                            <Box>
-                                <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
-                                    <MoreVertIcon/>
-                                </IconButton>
-                                <Menu
-                                    id="menu"
-                                    anchorEl={anchorEl}
-                                    keepMounted
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                >
-                                    <MenuItem onClick={handleClose}>
-                                        <ListItemIcon>
-                                            <EditIcon/>
-                                        </ListItemIcon>
-                                        <ListItemText primary="Edit" />
-                                    </MenuItem>
-                                    <MenuItem onClick={() => {
-                                        handleClose();
-                                    }}>
-                                        <ListItemIcon>
-                                            <DeleteIcon/>
-                                        </ListItemIcon>
-                                        <ListItemText primary="Delete" />
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
-                        }
-                        titleTypographyProps={{variant:'h6' }}
-                        title={<NavLink to={`/user/1}`}>Anon</NavLink>}
+                <form onSubmit={onCreateSubmit}>
+                    <TextField variant="outlined"
+                               size="small"
+                               type="text"
+                               value={addCommentContent}
+                               onChange={(event) => {
+                                   setAddCommentContent(event.target.value);
+                               }}
+                               label="Description"
+                               fullWidth={true}
+                               multiline={true}/>
+                    <IconButton color="primary" onClick={onCreateSubmit}>
+                        <AddIcon/>
+                    </IconButton>
+                </form>
 
-                        subheader={context.post.created_at}
-                    />
-                    <CardContent>
-                        <Typography variant="body2" component="p">
-                            {context.post.content}
-                        </Typography>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                            {context.post.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.likes}</Box>}
-                            <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
-                        </IconButton>
-                    </CardActions>
-                </Card>
-                {deleteConfirmationIsShown && (
-                    <DeleteDialog post={postToBeDeleted}
-                                  open={deleteConfirmationIsShown}
-                                  setDeleteConfirmationIsShown={setDeleteConfirmationIsShown}
-                    />
-                )}
+                {context.comments && context.comments.slice().reverse().map((comment => comment !== null ? comment : '') (
+                        <Card key={comment.id} className={classes.noBox}>
+                            <CardHeader
+                                className={classes.commentHeader}
+                                avatar={
+                                    <Avatar aria-label="recipe" className={classes.avatar}>
+                                        A
+                                    </Avatar>
+                                }
+                                action={
+                                    <Box>
+                                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
+                                            <MoreVertIcon/>
+                                        </IconButton>
+                                        <Menu
+                                            id="menu"
+                                            anchorEl={anchorEl}
+                                            keepMounted
+                                            open={Boolean(anchorEl)}
+                                            onClose={handleClose}
+                                        >
+                                            <MenuItem onClick={handleClose}>
+                                                <ListItemIcon>
+                                                    <VisibilityOffIcon/>
+                                                </ListItemIcon>
+                                                <ListItemText primary="Hide" />
+                                            </MenuItem>
+                                            <MenuItem onClick={() => {
+                                                handleClose();
+                                            }}>
+                                                <ListItemIcon>
+                                                    <DeleteIcon/>
+                                                </ListItemIcon>
+                                                <ListItemText primary="Delete" />
+                                            </MenuItem>
+                                        </Menu>
+                                    </Box>
+                                }
+                                titleTypographyProps={{variant:'h6' }}
+                                title={<NavLink to={`/user/1}`}>Anon</NavLink>}
+
+                                subheader={comment.created_at}
+                            />
+                            <CardContent>
+                                <Typography variant="body2" component="p">
+                                    {comment.content}
+                                </Typography>
+                            </CardContent>
+                            <CardActions disableSpacing>
+                                <IconButton aria-label="add to favorites">
+                                    {comment.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{comment.likes}</Box>}
+                                    <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
+                                </IconButton>
+                            </CardActions>
+                        </Card>
+
+                    ))}
+
             </Grid>
     );
 }

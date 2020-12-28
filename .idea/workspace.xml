@@ -4,18 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6424f8f2-453d-449d-aaa8-b0365a82f176" name="Default Changelist" comment="post inner">
-      <change afterPath="$PROJECT_DIR$/assets/components/Comments.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/components/DeleteDialog.js" afterDir="false" />
+    <list default="true" id="6424f8f2-453d-449d-aaa8-b0365a82f176" name="Default Changelist" comment="started comment section">
+      <change afterPath="$PROJECT_DIR$/assets/contexts/CommentsContextProvider.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c92e5e43-b096-4810-8b1f-2c5984061de0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c92e5e43-b096-4810-8b1f-2c5984061de0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Comments.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Comments.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/components/Post.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Post.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/components/Posts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Posts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/components/Router.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Router.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/contexts/BlogContextProvider.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/contexts/BlogContextProvider.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/assets/images/logo.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/PostsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PostsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Comment.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Comment.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Form/PostType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Form/PostType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +170,10 @@
       <option name="presentableId" value="Default" />
       <updated>1608824632597</updated>
       <workItem from="1608824633690" duration="7517000" />
-      <workItem from="1608898709571" duration="45981000" />
+      <workItem from="1608898709571" duration="46061000" />
+      <workItem from="1609026104427" duration="35000" />
+      <workItem from="1609030155673" duration="595000" />
+      <workItem from="1609086289980" duration="11967000" />
     </task>
     <task id="LOCAL-00001" summary="posts list">
       <created>1608947130298</created>
@@ -207,7 +210,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609015626308</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="started comment section">
+      <created>1609025959881</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1609025959881</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,6 +240,7 @@
     <MESSAGE value="posts list created" />
     <MESSAGE value="new posts list" />
     <MESSAGE value="post inner" />
-    <option name="LAST_COMMIT_MESSAGE" value="post inner" />
+    <MESSAGE value="started comment section" />
+    <option name="LAST_COMMIT_MESSAGE" value="started comment section" />
   </component>
 </project>

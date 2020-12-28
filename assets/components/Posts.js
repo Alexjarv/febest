@@ -24,6 +24,7 @@ import {red} from "@material-ui/core/colors";
 import clsx from "clsx";
 import {NavLink} from "react-router-dom";
 import DeleteDialog from "./DeleteDialog";
+import AddIcon from "@material-ui/icons/Add";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -88,6 +89,8 @@ export default function Posts() {
     const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [postToBeDeleted, setPostToBeDeleted] = useState(null);
+    const [addPostContent, setAddPostContent] = useState('');
+    const [addPostTitle, setAddPostTitle] = useState('');
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -99,6 +102,9 @@ export default function Posts() {
 
     const onCreateSubmit = (event) => {
         event.preventDefault();
+        context.createPost(event, {title: addPostTitle, content: addPostContent});
+        setAddPostTitle('');
+        setAddPostContent('');
     };
 
     const onEditSubmit = (postId, event) => {
@@ -113,6 +119,31 @@ export default function Posts() {
 
     return (
             <GridMargin container item xs={12} md={8} spacing={3} >
+                <form onSubmit={onCreateSubmit}>
+                    <TextField variant="outlined"
+                               size="small"
+                               type="text"
+                               value={addPostTitle}
+                               onChange={(event) => {
+                                   setAddPostTitle(event.target.value);
+                               }}
+                               label="Title"
+                               fullWidth={true}
+                               multiline={true}/>
+                    <TextField variant="outlined"
+                               size="small"
+                               type="text"
+                               value={addPostContent}
+                               onChange={(event) => {
+                                   setAddPostContent(event.target.value);
+                               }}
+                               label="Content"
+                               fullWidth={true}
+                               multiline={true}/>
+                    <IconButton color="primary" onClick={onCreateSubmit}>
+                        <AddIcon/>
+                    </IconButton>
+                </form>
                 {context.posts.slice().reverse().map((post, index) => (
                     <Grid item xs={12} key={'post' + index}>
                         <Card className={classes.root}>

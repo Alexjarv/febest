@@ -33,9 +33,19 @@ class Comment
     private $content;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $isEdited;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $isHidden;
+
+    /**
+     * @ORM\Column(type="integer", options={"default" : 0})
+     */
+    private $likes;
 
     /**
      * @ORM\Column(type="datetime")
@@ -86,12 +96,37 @@ class Comment
         return $this->isEdited;
     }
 
+    public function setIsHidden(int $hidden): self
+    {
+        $this->isHidden = $hidden;
+
+        return $this;
+    }
+
+    public function getIsHidden(): ?int
+    {
+        return $this->isHidden;
+    }
+
     public function setPostId(int $post_id): self
     {
         $this->post_id = $post_id;
 
         return $this;
     }
+
+    public function getLikes(): ?int
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(int $likes): self
+    {
+        $this->likes = $likes;
+
+        return $this;
+    }
+
 
     public function getContent(): ?string
     {
@@ -139,5 +174,21 @@ class Comment
         $this->deleted_at = $deleted_at;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'post_id' => $this->post_id,
+            'isHidden' => $this->isHidden,
+            'isEdited' => $this->isEdited,
+            'content' => $this->content,
+            'likes' => $this->likes,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at
+        ];
     }
 }

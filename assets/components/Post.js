@@ -22,6 +22,7 @@ import {NavLink} from "react-router-dom";
 import DeleteDialog from "./DeleteDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import Comments from "./Comments";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -179,64 +180,7 @@ export default function Post() {
                     <MarginDivider/>
                 </Grid>
 
-                <Grid className={classes.Box} item xs={12}>
-                    <h3>Comments</h3>
-
-                    <Card className={classes.noBox}>
-                        <CardHeader
-                            className={classes.commentHeader}
-                            avatar={
-                                <Avatar aria-label="recipe" className={classes.avatar}>
-                                    A
-                                </Avatar>
-                            }
-                            action={
-                                <Box>
-                                    <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
-                                        <MoreVertIcon/>
-                                    </IconButton>
-                                    <Menu
-                                        id="menu"
-                                        anchorEl={anchorEl}
-                                        keepMounted
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    >
-                                        <MenuItem onClick={handleClose}>
-                                            <ListItemIcon>
-                                                <EditIcon/>
-                                            </ListItemIcon>
-                                            <ListItemText primary="Edit" />
-                                        </MenuItem>
-                                        <MenuItem onClick={() => {
-                                            handleClose();
-                                        }}>
-                                            <ListItemIcon>
-                                                <DeleteIcon/>
-                                            </ListItemIcon>
-                                            <ListItemText primary="Delete" />
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
-                            }
-                            titleTypographyProps={{variant:'h6' }}
-                            title={<NavLink to={`/user/1}`}>Anon</NavLink>}
-
-                            subheader={context.post.created_at}
-                        />
-                        <CardContent>
-                            <Typography variant="body2" component="p">
-                                {context.post.content}
-                            </Typography>
-                        </CardContent>
-                        <CardActions disableSpacing>
-                            <IconButton aria-label="add to favorites">
-                                {context.post.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.likes}</Box>}
-                                <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
-                            </IconButton>
-                        </CardActions>
-                    </Card>
-                </Grid>
+                <Comments/>
 
             {deleteConfirmationIsShown && (
                 <DeleteDialog post={postToBeDeleted}
