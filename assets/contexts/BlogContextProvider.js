@@ -57,6 +57,18 @@ class BlogContextProvider extends React.Component {
     }
 
     //read
+    searchPosts(data) {
+        axios.get('/api/posts/search', data)
+            .then(response => {
+                this.setState({
+                    posts: response.data,
+                });
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //read
     readPost(slug) {
         console.log(slug);
         axios.get('/api/posts/readOne/'+ slug)

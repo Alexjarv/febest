@@ -58,6 +58,23 @@ class PostsController extends AbstractController
     }
 
     /**
+     * @Route("/search", name="api_posts_search", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $content = json_decode($request->getContent());
+
+        $result = $this->postRepository->createQueryBuilder('a')
+            ->where('a.title LIKE :title')
+            ->setParameter('title', '%'.$content->content.'%')
+            ->getQuery();
+
+        return $this->json($result);
+    }
+
+    /**
      * @Route("/create", name="api_post_create", methods={"POST"})
      * @param Request $request
      * @return JsonResponse

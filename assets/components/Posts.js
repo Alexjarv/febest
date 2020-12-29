@@ -77,12 +77,22 @@ export default function Posts() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [OpenedMenuId, setOpenedMenuId] = React.useState(null);
     const [postToBeDeleted, setPostToBeDeleted] = useState(null);
+    const [SearchContent, setSearchContent] = useState(null);
     const [expanded, setExpanded] = React.useState(false);
     const [expandedId, setExpandedId] = React.useState(null);
 
     const handleClose = () => {
         setAnchorEl(null);
         setOpenedMenuId(null);
+    };
+
+    const handleSearch = () => {
+        if(SearchContent === ''){
+            context.readPosts();
+        } else {
+            context.searchPosts({content: SearchContent});
+        }
+
     };
 
     const onEditSubmit = (postId, event) => {
@@ -96,6 +106,10 @@ export default function Posts() {
                     style={{ margin: 8 }}
                     placeholder="Enter post title or post content..."
                     fullWidth
+                    onChange={(event) => {
+                        setSearchContent(event.target.value);
+                        handleSearch
+                    }}
                     variant="outlined"
                     margin="normal"
                     InputLabelProps={{
