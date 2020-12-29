@@ -119,7 +119,7 @@ class PostsController extends AbstractController
 
         }
         return $this->json([
-            'todo'    => $post->toArray(),
+            'post'    => $post->toArray(),
             'message' => ['text' => 'Post has been created!', 'level' => 'success']
         ]);
     }

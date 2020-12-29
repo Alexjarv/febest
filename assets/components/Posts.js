@@ -2,7 +2,7 @@ import React, {Fragment, useContext, useState} from 'react';
 import {BlogContext} from '../contexts/BlogContextProvider';
 import {
     Avatar,
-    Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Grid,
+    Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Fade, Grid,
     IconButton, Link, ListItemIcon, ListItemText,
     makeStyles, Menu, MenuItem,
     Table,
@@ -57,19 +57,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
-const LightGreyTextTypography = withStyles({
-    root: {
-        color: "#c9c9cc"
-    }
-})(Typography);
-
-const GreyTextTypography = withStyles({
-    root: {
-        color: "#6e6d7a"
-    }
-})(Typography);
-
 const MarginDivider = withStyles({
     root: {
         marginTop: "25px"
@@ -88,64 +75,35 @@ export default function Posts() {
     const classes = useStyles();
     const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [OpenedMenuId, setOpenedMenuId] = React.useState(null);
     const [postToBeDeleted, setPostToBeDeleted] = useState(null);
-    const [addPostContent, setAddPostContent] = useState('');
-    const [addPostTitle, setAddPostTitle] = useState('');
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    const [expanded, setExpanded] = React.useState(false);
+    const [expandedId, setExpandedId] = React.useState(null);
 
     const handleClose = () => {
         setAnchorEl(null);
-    };
-
-    const onCreateSubmit = (event) => {
-        event.preventDefault();
-        context.createPost(event, {title: addPostTitle, content: addPostContent});
-        setAddPostTitle('');
-        setAddPostContent('');
+        setOpenedMenuId(null);
     };
 
     const onEditSubmit = (postId, event) => {
         event.preventDefault();
     };
 
-    const [expanded, setExpanded] = React.useState(false);
-
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-
     return (
             <GridMargin container item xs={12} md={8} spacing={3} >
-                <form onSubmit={onCreateSubmit}>
-                    <TextField variant="outlined"
-                               size="small"
-                               type="text"
-                               value={addPostTitle}
-                               onChange={(event) => {
-                                   setAddPostTitle(event.target.value);
-                               }}
-                               label="Title"
-                               fullWidth={true}
-                               multiline={true}/>
-                    <TextField variant="outlined"
-                               size="small"
-                               type="text"
-                               value={addPostContent}
-                               onChange={(event) => {
-                                   setAddPostContent(event.target.value);
-                               }}
-                               label="Content"
-                               fullWidth={true}
-                               multiline={true}/>
-                    <IconButton color="primary" onClick={onCreateSubmit}>
-                        <AddIcon/>
-                    </IconButton>
-                </form>
+                <TextField
+                    label="Search"
+                    style={{ margin: 8 }}
+                    placeholder="Enter post title or post content..."
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
                 {context.posts.slice().reverse().map((post, index) => (
-                    <Grid item xs={12} key={'post' + index}>
+                    <Grid item xs={12} key={'post ' + index}>
                         <Card className={classes.root}>
                             <CardHeader
                                 avatar={
@@ -155,26 +113,35 @@ export default function Posts() {
                                 }
                                 action={
                                     <Box>
-                                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
+                                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={(event) => {
+                                            if(OpenedMenuId !== post.id){
+                                                setOpenedMenuId(post.id);
+                                            } else {
+                                                setOpenedMenuId(null);
+                                            }
+                                            setAnchorEl(event.currentTarget);
+                                        }}>
                                             <MoreVertIcon/>
                                         </IconButton>
                                         <Menu
-                                        id={`${index} + "menu" `}
+                                        id={`menu-${index}`}
                                         anchorEl={anchorEl}
                                         keepMounted
-                                        open={Boolean(anchorEl)}
+                                        open={OpenedMenuId === post.id}
                                         onClose={handleClose}
+                                        TransitionComponent={Fade}
                                         >
-                                            <MenuItem onClick={handleClose}>
+                                            <MenuItem id={`MenuItem1-${index}`} onClick={handleClose}>
                                                 <ListItemIcon>
                                                     <EditIcon/>
                                                 </ListItemIcon>
                                                 <ListItemText primary="Edit" />
                                             </MenuItem>
-                                            <MenuItem onClick={() => {
+                                            <MenuItem id={`MenuItem2-${index}`} onClick={() => {
                                                 setDeleteConfirmationIsShown(true);
                                                 setPostToBeDeleted(post);
-                                                handleClose();
+                                                setAnchorEl(null);
+                                                setOpenedMenuId(null);
                                             }}>
                                                 <ListItemIcon>
                                                     <DeleteIcon/>
@@ -210,16 +177,24 @@ export default function Posts() {
                                 </IconButton>
                                 <IconButton
                                     className={clsx(classes.expand, {
-                                        [classes.expandOpen]: expanded,
+                                        [classes.expandOpen]: expandedId === post.id,
                                     })}
-                                    onClick={handleExpandClick}
+                                    onClick={() => {
+                                        if(expandedId !== post.id){
+                                            setExpandedId(post.id);
+                                            setExpanded(true);
+                                        } else {
+                                            setExpandedId(null);
+                                            setExpanded(false);
+                                        }
+                                    }}
                                     aria-expanded={expanded}
                                     aria-label="show more"
                                 >
                                     <ExpandMoreIcon />
                                 </IconButton>
                             </CardActions>
-                            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                            <Collapse in={expandedId === post.id} id={`"collapse"+${post.id}`} timeout="auto" unmountOnExit>
                                 <CardContent>
                                     <Typography variant="body2" color="textPrimary" component="p">
                                         {post.content}

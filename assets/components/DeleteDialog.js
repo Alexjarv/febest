@@ -23,7 +23,11 @@ function DeleteDialog(props) {
             <DialogActions>
                 <Button onClick={hide}>Cancel</Button>
                 <Button onClick={() => {
-                    context.deletePost(props.post);
+                    if(!props.isInside) {
+                        context.deletePost(props.post);
+                    } else {
+                        context.deletePost(props.post, props.isInside);
+                    }
                     hide();
                 }}>
                     Delete
@@ -36,8 +40,10 @@ function DeleteDialog(props) {
 DeleteDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     setDeleteConfirmationIsShown: PropTypes.func.isRequired,
+    isInside: PropTypes.bool,
     post: PropTypes.shape({
         id: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
     })
 };
 

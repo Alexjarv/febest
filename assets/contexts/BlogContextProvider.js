@@ -1,6 +1,7 @@
 import React, {createContext} from 'react';
 import axios from 'axios';
 import {Breadcrumbs, Container, Grid, Link} from "@material-ui/core";
+import {Redirect} from "react-router";
 
 export const BlogContext = createContext();
 
@@ -109,7 +110,7 @@ class BlogContextProvider extends React.Component {
     }
 
     //delete
-    deletePost(data) {
+    deletePost(data, isInside) {
         axios.delete('/api/posts/delete/' + data.id)
             .then(response => {
                 console.log(response);
@@ -119,17 +120,21 @@ class BlogContextProvider extends React.Component {
                     });
                 } else {
                     //message
-                    let posts = [...this.state.posts];
-                    let post = posts.find(post => {
-                        return post.id === data.id;
-                    });
+                    if(!isInside) {
+                        let posts = [...this.state.posts];
+                        let post = posts.find(post => {
+                            return post.id === data.id;
+                        });
 
-                    posts.splice(posts.indexOf(post), 1);
+                        posts.splice(posts.indexOf(post), 1);
 
-                    this.setState({
-                        posts: posts,
-                        message: response.data.message
-                    });
+                        this.setState({
+                            posts: posts,
+                            message: response.data.message
+                        });
+                    } else {
+                        return <Redirect to='/'  />
+                    }
                 }
             }).catch(error => {
             console.error(error);

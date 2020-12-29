@@ -28,14 +28,16 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     private $entityManager;
     private $urlGenerator;
-    private $csrfTokenManager;
+    #private $csrfTokenManager;
     private $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator,
+                                #CsrfTokenManagerInterface $csrfTokenManager,
+                                UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
+        #$this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
     }
 
@@ -50,7 +52,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         $credentials = [
             'username' => $request->request->get('username'),
             'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
+            #'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -62,10 +64,10 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
+        #$token = new CsrfToken('authenticate', $credentials['csrf_token']);
+        #if (!$this->csrfTokenManager->isTokenValid($token)) {
+        #    throw new InvalidCsrfTokenException();
+        #}
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
 

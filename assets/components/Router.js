@@ -13,12 +13,23 @@ import BlogContextProvider from "../contexts/BlogContextProvider";
 import Posts from "./Posts";
 import {Breadcrumbs, Container, CssBaseline, Grid, Link} from "@material-ui/core";
 import Post from "./Post";
+import NewPost from "./NewPost";
 
-const PostsList = () => (
+const PostsListRoute = () => (
     <React.Fragment>
         <CssBaseline />
         <BlogContextProvider>
             <Posts/>
+            <Sidebar/>
+        </BlogContextProvider>
+    </React.Fragment>
+);
+
+const NewPostRoute = () => (
+    <React.Fragment>
+        <CssBaseline />
+        <BlogContextProvider>
+            <NewPost/>
             <Sidebar/>
         </BlogContextProvider>
     </React.Fragment>
@@ -29,14 +40,15 @@ export default function Router() {
     return (
         <BrowserRouter>
             <Switch>
-                <Route exact path="/" component={PostsList}/>
-                <Route exact path="/article/:slug" children={<PostInner/>} />
+                <Route exact path="/" component={PostsListRoute}/>
+                <Route exact path="/article/new" component={NewPostRoute}/>
+                <Route exact path="/article/:slug" children={<PostInnerRoute/>} />
             </Switch>
         </BrowserRouter>
     );
 };
 
-function PostInner() {
+function PostInnerRoute() {
     // We can use the `useParams` hook here to access
     // the dynamic pieces of the URL.
     let { slug } = useParams();

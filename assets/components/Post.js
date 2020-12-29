@@ -186,6 +186,7 @@ export default function Post() {
                 <DeleteDialog post={postToBeDeleted}
                               open={deleteConfirmationIsShown}
                               setDeleteConfirmationIsShown={setDeleteConfirmationIsShown}
+                              isInside={true}
                 />
             )}
         </GridMargin>

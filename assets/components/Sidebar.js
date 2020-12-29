@@ -1,11 +1,12 @@
 import React, {Fragment, useContext, useState} from 'react';
 import {BlogContext} from '../contexts/BlogContextProvider';
 import {
-    Box,
+    Box, Divider,
     Grid,
     Link,
-    makeStyles, Typography,
+    makeStyles, Typography, withStyles,
 } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,6 +18,12 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(3),
     },
 }));
+
+const MarginDivider = withStyles({
+    root: {
+        marginTop: "25px"
+    }
+})(Divider);
 
 
 export default function Sidebar() {
@@ -33,8 +40,17 @@ export default function Sidebar() {
         event.preventDefault();
     };
 
+
     return (
         <Grid item xs={12} md={4}>
+            <Grid container spacing={1}>
+                <Grid item xs={12}>
+                    <Button fullWidth variant="contained" color="primary" href="/article/new">
+                        Add Post
+                    </Button>
+                </Grid>
+            </Grid>
+            <MarginDivider/>
             <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
                 Categories
             </Typography>
