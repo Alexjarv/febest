@@ -12,6 +12,7 @@ class CommentsContextProvider extends React.Component {
             message: {}
         };
         this.readComments();
+        console.log("Test");
     }
 
     //create
@@ -39,11 +40,15 @@ class CommentsContextProvider extends React.Component {
 
     //read
     readComments() {
+        console.log("Test");
+        console.log("Test");
+        console.log("Test");
         axios.get('/api/comments/read')
             .then(response => {
                 this.setState({
                     comments: response.data,
                 });
+                console.log(this.state.comments);
             }).catch(error => {
             console.error(error);
         });

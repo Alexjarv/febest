@@ -14,6 +14,8 @@ import Posts from "./Posts";
 import {Breadcrumbs, Container, CssBaseline, Grid, Link} from "@material-ui/core";
 import Post from "./Post";
 import NewPost from "./NewPost";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
 const PostsListRoute = () => (
     <React.Fragment>
@@ -34,12 +36,31 @@ const NewPostRoute = () => (
         </BlogContextProvider>
     </React.Fragment>
 );
+const SignInRoute = () => (
+    <React.Fragment>
+        <CssBaseline />
+        <BlogContextProvider>
+            <SignIn/>
+        </BlogContextProvider>
+    </React.Fragment>
+);
+const SignUpRoute = () => (
+    <React.Fragment>
+        <CssBaseline />
+        <BlogContextProvider>
+            <SignUp/>
+        </BlogContextProvider>
+    </React.Fragment>
+);
 
 
 export default function Router() {
     return (
         <BrowserRouter>
             <Switch>
+                <Route exact path="/" component={PostsListRoute}/>
+                <Route exact path="/login" component={SignInRoute}/>
+                <Route exact path="/register" component={SignUpRoute}/>
                 <Route exact path="/" component={PostsListRoute}/>
                 <Route exact path="/article/new" component={NewPostRoute}/>
                 <Route exact path="/article/:slug" children={<PostInnerRoute/>} />

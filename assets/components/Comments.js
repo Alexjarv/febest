@@ -13,14 +13,8 @@ import {
     TextField,
     Typography, withStyles
 } from "@material-ui/core";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import AddIcon from '@material-ui/icons/Add';
 import {red} from "@material-ui/core/colors";
-import {NavLink} from "react-router-dom";
-import DeleteDialog from "./DeleteDialog";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 
 const useStyles = makeStyles(() => ({
@@ -35,6 +29,10 @@ const useStyles = makeStyles(() => ({
     },
     commentHeader: {
         padding: "10px"
+    },
+    formPadding:{
+        marginTop: "15px",
+        marginBottom: "15px"
     },
     flex: {
         display: "flex"
@@ -60,16 +58,6 @@ const useStyles = makeStyles(() => ({
         backgroundColor: red[500],
     },
 }));
-withStyles({
-    root: {
-        color: "#c9c9cc"
-    }
-})(Typography);
-withStyles({
-    root: {
-        color: "#6e6d7a"
-    }
-})(Typography);
 withStyles({
     root: {
         marginTop: "25px"
@@ -109,80 +97,83 @@ export default function Comments() {
 
     return (
             <Grid className={classes.Box} item xs={12}>
-                <h3>Comments</h3>
+                <h3>Comments </h3>
                 <form onSubmit={onCreateSubmit}>
                     <TextField variant="outlined"
                                size="small"
                                type="text"
+                               rows={1}
+                               rowsMax={24}
+                               multiline
+                               className={classes.formPadding}
                                value={addCommentContent}
                                onChange={(event) => {
                                    setAddCommentContent(event.target.value);
                                }}
-                               label="Description"
-                               fullWidth={true}
-                               multiline={true}/>
+                               label="New comment"
+                               fullWidth={true}/>
                     <IconButton color="primary" onClick={onCreateSubmit}>
                         <AddIcon/>
                     </IconButton>
                 </form>
 
-                {context.comments && context.comments.slice().reverse().map((comment => comment !== null ? comment : '') (
-                        <Card key={comment.id} className={classes.noBox}>
-                            <CardHeader
-                                className={classes.commentHeader}
-                                avatar={
-                                    <Avatar aria-label="recipe" className={classes.avatar}>
-                                        A
-                                    </Avatar>
-                                }
-                                action={
-                                    <Box>
-                                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
-                                            <MoreVertIcon/>
-                                        </IconButton>
-                                        <Menu
-                                            id="menu"
-                                            anchorEl={anchorEl}
-                                            keepMounted
-                                            open={Boolean(anchorEl)}
-                                            onClose={handleClose}
-                                        >
-                                            <MenuItem onClick={handleClose}>
-                                                <ListItemIcon>
-                                                    <VisibilityOffIcon/>
-                                                </ListItemIcon>
-                                                <ListItemText primary="Hide" />
-                                            </MenuItem>
-                                            <MenuItem onClick={() => {
-                                                handleClose();
-                                            }}>
-                                                <ListItemIcon>
-                                                    <DeleteIcon/>
-                                                </ListItemIcon>
-                                                <ListItemText primary="Delete" />
-                                            </MenuItem>
-                                        </Menu>
-                                    </Box>
-                                }
-                                titleTypographyProps={{variant:'h6' }}
-                                title={<NavLink to={`/user/1}`}>Anon</NavLink>}
-
-                                subheader={comment.created_at}
-                            />
-                            <CardContent>
-                                <Typography variant="body2" component="p">
-                                    {comment.content}
-                                </Typography>
-                            </CardContent>
-                            <CardActions disableSpacing>
-                                <IconButton aria-label="add to favorites">
-                                    {comment.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{comment.likes}</Box>}
-                                    <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
-                                </IconButton>
-                            </CardActions>
-                        </Card>
-
-                    ))}
+                {/*{context.comments.slice().reverse().map((comment, index) => (*/}
+                {/*        <Card key={comment.id} className={classes.noBox}>*/}
+                {/*            <CardHeader*/}
+                {/*                className={classes.commentHeader}*/}
+                {/*                avatar={*/}
+                {/*                    <Avatar aria-label="recipe" className={classes.avatar}>*/}
+                {/*                        A*/}
+                {/*                    </Avatar>*/}
+                {/*                }*/}
+                {/*                action={*/}
+                {/*                    <Box>*/}
+                {/*                        <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>*/}
+                {/*                            <MoreVertIcon/>*/}
+                {/*                        </IconButton>*/}
+                {/*                        <Menu*/}
+                {/*                            id="menu"*/}
+                {/*                            anchorEl={anchorEl}*/}
+                {/*                            keepMounted*/}
+                {/*                            open={Boolean(anchorEl)}*/}
+                {/*                            onClose={handleClose}*/}
+                {/*                        >*/}
+                {/*                            <MenuItem onClick={handleClose}>*/}
+                {/*                                <ListItemIcon>*/}
+                {/*                                    <VisibilityOffIcon/>*/}
+                {/*                                </ListItemIcon>*/}
+                {/*                                <ListItemText primary="Hide" />*/}
+                {/*                            </MenuItem>*/}
+                {/*                            <MenuItem onClick={() => {*/}
+                {/*                                handleClose();*/}
+                {/*                            }}>*/}
+                {/*                                <ListItemIcon>*/}
+                {/*                                    <DeleteIcon/>*/}
+                {/*                                </ListItemIcon>*/}
+                {/*                                <ListItemText primary="Delete" />*/}
+                {/*                            </MenuItem>*/}
+                {/*                        </Menu>*/}
+                {/*                    </Box>*/}
+                {/*                }*/}
+                {/*                titleTypographyProps={{variant:'h6' }}*/}
+                {/*                title={<NavLink to={`/user/1}`}>Anon</NavLink>}*/}
+                
+                {/*                subheader={comment.created_at}*/}
+                {/*            />*/}
+                {/*            <CardContent>*/}
+                {/*                <Typography variant="body2" component="p">*/}
+                {/*                    {comment.content}*/}
+                {/*                </Typography>*/}
+                {/*            </CardContent>*/}
+                {/*            <CardActions disableSpacing>*/}
+                {/*                <IconButton aria-label="add to favorites">*/}
+                {/*                    {comment.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{comment.likes}</Box>}*/}
+                {/*                    <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>*/}
+                {/*                </IconButton>*/}
+                {/*            </CardActions>*/}
+                {/*        </Card>*/}
+                
+                {/*    ))}*/}
 
             </Grid>
     );

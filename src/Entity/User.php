@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Boolean;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -25,9 +26,9 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $is_superuser;
+    private $isSuperuser;
 
     /**
      * @ORM\Column(type="json")
@@ -39,6 +40,21 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deleted_at;
 
     public function getId(): ?int
     {
@@ -69,8 +85,9 @@ class User implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
+        if(empty($roles)){
+            $roles[] = 'ROLE_USER';
+        }
         return array_unique($roles);
     }
 
@@ -84,13 +101,16 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function isSuperuser(): Boolean
+    public function getIsSuperuser(): Integer
     {
-        if($this->is_superuser == 1){
-            return true;
-        } else {
-            return false;
-        }
+        return $this->isSuperuser;
+    }
+
+    public function setIsSuperuser(Integer $super): self
+    {
+        $this->isSuperuser = $super;
+
+        return $this;
     }
 
     /**
@@ -104,6 +124,42 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deleted_at): self
+    {
+        $this->deleted_at = $deleted_at;
 
         return $this;
     }

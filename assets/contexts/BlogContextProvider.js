@@ -28,12 +28,12 @@ class BlogContextProvider extends React.Component {
         axios.post('/api/posts/create', post)
             .then(response => {
                 if (response.data.message.level === 'success') {
-                    let data = [...this.state.posts];
-                    data.push(response.data.post);
                     this.setState({
-                        posts: data,
                         message: response.data.message,
                     });
+
+                    setTimeout(function(){ window.location.href = "/"; }, 1500);
+
                 } else {
                     this.setState({
                         message: response.data.message,
@@ -42,7 +42,6 @@ class BlogContextProvider extends React.Component {
             }).catch(error => {
             console.error(error);
         });
-
     }
 
     //read
@@ -158,7 +157,7 @@ class BlogContextProvider extends React.Component {
                             {this.props.slug &&
                                 <Link
                                     color="textPrimary"
-                                    href={`"/article/" + ${this.props.slug}`}
+                                    href={`/article/${this.props.slug}`}
                                     aria-current="page"
                                 >
                                     {this.state.post.title}
