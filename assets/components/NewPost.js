@@ -1,47 +1,16 @@
-import React, {Fragment, useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BlogContext} from '../contexts/BlogContextProvider';
 import {
-    Avatar,
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    CardMedia,
-    Collapse,
-    Divider,
     FormControl, FormControlLabel,
-    FormGroup, FormHelperText,
+    FormGroup,
     FormLabel,
     Grid,
-    IconButton,
-    Link,
-    ListItemIcon,
-    ListItemText,
     makeStyles,
-    Menu,
-    MenuItem,
     Paper, Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
     TextField,
-    Typography,
     withStyles
 } from "@material-ui/core";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import CommentIcon from '@material-ui/icons/Comment';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {red} from "@material-ui/core/colors";
-import {NavLink} from "react-router-dom";
-import DeleteDialog from "./DeleteDialog";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import Comments from "./Comments";
-import AddIcon from "@material-ui/icons/Add";
+
 import SendIcon from '@material-ui/icons/Send';
 import Button from "@material-ui/core/Button";
 
@@ -80,7 +49,8 @@ export default function NewPost() {
 
     const onCreateSubmit = (event) => {
         event.preventDefault();
-        context.createPost(event, {title: addPostTitle, content: addPostContent});
+        // context.updatePost(event, {title: addPostTitle, content: addPostContent, categories: addAddCategory, post_id: context.post.id});
+        context.createPost(event, {title: addPostTitle, content: addPostContent, categories: addAddCategory});
         setAddPostTitle('');
         setAddPostContent('');
     };

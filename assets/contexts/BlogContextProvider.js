@@ -2,6 +2,8 @@ import React, {createContext} from 'react';
 import axios from 'axios';
 import {Breadcrumbs, Container, Grid, Link} from "@material-ui/core";
 import {Redirect} from "react-router";
+import Navigation from "../components/Navigation";
+import AppSnackbar from "../components/AppSnackbar";
 
 export const BlogContext = createContext();
 
@@ -12,14 +14,44 @@ class BlogContextProvider extends React.Component {
             posts: [],
             categories: [],
             message: {},
-            post: {}
+            post: {},
+            user: {},
+            postIsLiked: {value: false},
+            isAuthenticated: {},
+            lastUsername: {},
+            error: {},
+            postCategories: [],
+            comments: [],
         };
         if(props.slug){
             this.readPost(props.slug);
+        } else if(props.categorySlug){
+            this.readCategoryPosts(props.categorySlug);
         } else {
             this.readPosts();
         }
         this.readCategories();
+    }
+
+    componentDidMount() {
+        this.readUser();
+    }
+
+    readUser(){
+        const isAuthenticated = document.querySelector(".js-user").getAttribute('data-is-authenticated');
+        const user = document.querySelector(".js-user-profile").getAttribute('data-user-profile');
+        const lastUsername = document.querySelector(".js-lastUsername").getAttribute('data-is-lastusername');
+
+        if(user){
+            this.setState({
+                user: JSON.parse(user),
+            });
+        }
+        if(isAuthenticated){
+            this.setState({
+                isAuthenticated: isAuthenticated,
+            });
+        }
     }
 
     //create
@@ -58,7 +90,7 @@ class BlogContextProvider extends React.Component {
 
     //read
     searchPosts(data) {
-        axios.get('/api/posts/search', data)
+        axios.get('/api/posts/search/' + data.content)
             .then(response => {
                 this.setState({
                     posts: response.data,
@@ -70,11 +102,36 @@ class BlogContextProvider extends React.Component {
 
     //read
     readPost(slug) {
-        console.log(slug);
         axios.get('/api/posts/readOne/'+ slug)
             .then(response => {
                 this.setState({
                     post: response.data,
+                });
+                this.readPostCategories(response.data.id);
+                this.readComments(response.data.id);
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //read
+    readCategoryPosts(slug) {
+        axios.get('/api/posts/readCategory/'+ slug)
+            .then(response => {
+                this.setState({
+                    posts: response.data,
+                });
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //read
+    readPostCategories(id) {
+        axios.get('/api/categories/readByPost/' + id)
+            .then(response => {
+                this.setState({
+                    postCategories: response.data,
                 });
             }).catch(error => {
             console.error(error);
@@ -88,6 +145,32 @@ class BlogContextProvider extends React.Component {
                 this.setState({
                     categories: response.data,
                 });
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //update
+    likePost(data) {
+        axios.put('/api/posts/like/' + data.id)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    let posts = [...this.state.posts];
+                    let post = posts.find(post => {
+                        return post.id === data.id;
+                    });
+
+                    post.likes = response.data.post.likes;
+
+                    this.setState({
+                        posts: posts,
+                        message: response.data.message,
+                    });
+                }
             }).catch(error => {
             console.error(error);
         });
@@ -124,7 +207,6 @@ class BlogContextProvider extends React.Component {
     deletePost(data, isInside) {
         axios.delete('/api/posts/delete/' + data.id)
             .then(response => {
-                console.log(response);
                 if (response.data.message.level === 'error') {
                     this.setState({
                         message: response.data.message,
@@ -144,7 +226,7 @@ class BlogContextProvider extends React.Component {
                             message: response.data.message
                         });
                     } else {
-                        return <Redirect to='/'  />
+                        window.location.href = "/";
                     }
                 }
             }).catch(error => {
@@ -152,16 +234,139 @@ class BlogContextProvider extends React.Component {
         });
     }
 
+    //create
+    createComment(event, comment) {
+        event.preventDefault();
+        axios.post('/api/comments/create', comment)
+            .then(response => {
+                if (response.data.message.level === 'success') {
+                    let data = [...this.state.comments];
+                    data.push(response.data.comment);
+                    this.setState({
+                        comments: data,
+                        post: response.data.post,
+                        message: response.data.message,
+                    });
+                } else {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //read
+    readComments(id) {
+        axios.get('/api/comments/read/' + id)
+            .then(response => {
+                this.setState({
+                    comments: response.data,
+                });
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //update
+    updateComment(data) {
+        axios.put('/api/comments/update/' + data.id, data)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    let comments = [...this.state.comments];
+                    let comment = comments.find(comment => {
+                        return comment.id === data.id;
+                    });
+
+                    comment.content = response.data.comment.content;
+
+                    this.setState({
+                        comments: comments,
+                        message: response.data.message,
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //hide
+    hideComment(data) {
+        axios.put('/api/comments/hide/' + data.comment_id)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    this.setState({
+                        comments: response.data.comments,
+                        message: response.data.message
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //delete
+    deleteComment(data) {
+        axios.delete('/api/comments/delete/' + data.id)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    //message
+                    let comments = [...this.state.comments];
+                    let comment = comments.find(comment => {
+                        return comment.id === data.id;
+                    });
+
+                    comments.splice(comments.indexOf(comment), 1);
+
+                    this.setState({
+                        comments: comments,
+                        post: response.data.post,
+                        message: response.data.message
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    //read
+    logout() {
+        return <Redirect to='/logout'/>
+    }
+
     render() {
         return (
             <BlogContext.Provider value={{
                 ...this.state,
                 createPost: this.createPost.bind(this),
+                readPosts: this.readPosts.bind(this),
+                searchPosts: this.searchPosts.bind(this),
                 updatePost: this.updatePost.bind(this),
                 deletePost: this.deletePost.bind(this),
+                likePost: this.likePost.bind(this),
+                createComment: this.createComment.bind(this),
+                updateComment: this.updateComment.bind(this),
+                hideComment: this.hideComment.bind(this),
+                deleteComment: this.deleteComment.bind(this),
+                logout: this.logout.bind(this),
                 setMessage: (message) => this.setState({message: message}),
             }}>
-                    <Container maxWidth="lg">
+                <Navigation/>
+                <AppSnackbar/>
+                    <Container m={5} maxWidth="lg">
                         <Breadcrumbs aria-label="navigation">
                             <Link color="inherit" href="/">
                                 Blogs

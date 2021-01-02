@@ -6,26 +6,47 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
+use App\Security\UserAuthenticator;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    private $entityManager;
+    private $urlGenerator;
+    private $passwordEncoder;
+    private $authenticator;
+
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator,
+                                UserPasswordEncoderInterface $passwordEncoder, UserAuthenticator $authenticator)
+    {
+        $this->entityManager = $entityManager;
+        $this->urlGenerator = $urlGenerator;
+        $this->passwordEncoder = $passwordEncoder;
+        $this->authenticator = $authenticator;
+    }
+
 //    /**
 //     * @Route("/login", name="app_login")
+//     * @param AuthenticationUtils $authenticationUtils
+//     * @return Response
 //     */
 //    public function login(AuthenticationUtils $authenticationUtils): Response
 //    {
-//        // if ($this->getUser()) {
-//        //     return $this->redirectToRoute('target_path');
-//        // }
+//         if ($this->getUser()) {
+//             return $this->redirectToRoute('target_path');
+//         }
 //
 //        // get the login error if there is one
 //        $error = $authenticationUtils->getLastAuthenticationError();
@@ -34,19 +55,36 @@ class SecurityController extends AbstractController
 //
 //        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
 //    }
-    private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+
+    /**
+     * @Route("/login", name="app_login")
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        $this->entityManager = $entityManager;
+        if ($this->getUser()) {
+             return $this->redirectToRoute('target_path');
+        }
+
+        $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        return $this->render('index/index.html.twig', [
+            'controller_name' => 'IndexController',
+            'last_username' => $lastUsername,
+            'error' => $error
+        ]);
     }
 
     /**
      * @Route("/register", name="app_register", methods={"POST"})
+     * @param GuardAuthenticatorHandler $guardHandler
      * @param Request $request
-     * @return JsonResponse
+     * @return JsonResponse|Response
      */
-    public function register(Request $request): JsonResponse
+    public function register(GuardAuthenticatorHandler $guardHandler, Request $request)
     {
         $content = json_decode($request->getContent());
 
@@ -68,12 +106,14 @@ class SecurityController extends AbstractController
         $user = new User();
 
         $user->setUsername($content->username);
-        $user->setPassword($content->password);
-        if($content->isSuperuser == 'true'){
-            $user->setIsSuperuser(1);
+        $user->setPassword($this->passwordEncoder->encodePassword(
+            $user,
+            $content->password
+        ));
+        $user->setIsSuperuser($content->isSuperuser);
+        if($content->isSuperuser == 1){
             $user->setRoles((array)'ROLE_ADMIN');
         } else {
-            $user->setIsSuperuser(0);
             $user->setRoles((array)'ROLE_USER');
         }
         $user->setCreatedAt(new DateTime());
@@ -87,9 +127,15 @@ class SecurityController extends AbstractController
             ]);
 
         }
-        return $this->json([
-            'message' => ['text' => 'User has been created!', 'level' => 'success']
-        ]);
+
+        // after validating the user and saving them to the database
+        // authenticate the user and use onAuthenticationSuccess on the authenticator
+        return $guardHandler->authenticateUserAndHandleSuccess(
+            $user,          // the User object you just created
+            $request,
+            $this->authenticator, // authenticator whose onAuthenticationSuccess you want to use
+            'main'          // the name of your firewall in security.yaml
+        );
     }
 
     /**

@@ -56,6 +56,11 @@ class User implements UserInterface
      */
     private $deleted_at;
 
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
     public function getId(): ?int
     {
         return $this->id;
@@ -101,12 +106,12 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getIsSuperuser(): Integer
+    public function getIsSuperuser(): ?int
     {
         return $this->isSuperuser;
     }
 
-    public function setIsSuperuser(Integer $super): self
+    public function setIsSuperuser(int $super): self
     {
         $this->isSuperuser = $super;
 
@@ -179,5 +184,18 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'isSuperuser' => $this->isSuperuser,
+            'roles' => $this->roles,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at
+        ];
     }
 }

@@ -2,8 +2,15 @@
 
 namespace App\Entity;
 
+use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
+use App\Repository\PostCategoryRepository;
+use App\Repository\PostLikeRepository;
 use App\Repository\PostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Object_;
+use stdClass;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -26,6 +33,11 @@ class Post
      * @ORM\Column(type="string", length=255)
      */
     private $title;
+
+    /**
+     * @ORM\Column(type="object", nullable=true)
+     */
+    private $categories;
 
     /**
      * @ORM\Column(type="text")
@@ -133,6 +145,18 @@ class Post
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getCategories(): ?stdClass
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(\stdClass $categories): self
+    {
+        $this->categories = $categories;
 
         return $this;
     }

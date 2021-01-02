@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use App\Repository\PostCategoryRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,11 +23,13 @@ class CategoriesController extends AbstractController
 
     private $entityManager;
     private $categoryRepository;
+    private $postCategoryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository)
+    public function __construct(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, PostCategoryRepository $postCategoryRepository)
     {
         $this->entityManager = $entityManager;
         $this->categoryRepository = $categoryRepository;
+        $this->postCategoryRepository = $postCategoryRepository;
     }
 
     /**
@@ -39,6 +42,23 @@ class CategoriesController extends AbstractController
         $arrayOfCategories = [];
         foreach ($categories as $category) {
             $arrayOfCategories[] = $category->toArray();
+        }
+        return $this->json($arrayOfCategories);
+    }
+
+    /**
+     * @Route("/readByPost/{id}", name="api_post_categories_read", methods={"GET"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function readByPost($id): JsonResponse
+    {
+        $postCategories = $this->postCategoryRepository->findBy(["post_id" => $id]);
+
+        $arrayOfCategories = [];
+        foreach ($postCategories as $postCategory) {
+            $category = $this->categoryRepository->findOneBy(["id" => $postCategory->getCategoryId()]);
+            $arrayOfCategories[] = $category->getTitle();
         }
         return $this->json($arrayOfCategories);
     }

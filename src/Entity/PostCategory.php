@@ -106,4 +106,5 @@ class PostCategory
 
         return $this;
     }
+
 }

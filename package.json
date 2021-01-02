@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "@material-ui/icons": "^4.11.2",
+        "@material-ui/lab": "^4.0.0-alpha.57",
         "draft-js": "^0.11.7",
         "mui-rte": "^1.26.2",
         "prop-types": "^15.7.2",

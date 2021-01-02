@@ -4,9 +4,7 @@
 
 {% block body %}
     <div id="root"></div>
-    {% if app.user %}
-        <span># user is logged in</span>
-    {% else %}
-        <span># user is not logged in</span>
-    {% endif %}
+    <div class="js-user" data-is-authenticated="{{ app.user ? 'true' : 'false' }}"></div>
+    <div class="js-user-profile" data-user-profile="{% if app.user is defined %}{{ app.user ? app.user.toArray|json_encode|e('html_attr') }}{% endif %}"></div>
+    <div class="js-lastUsername" data-is-lastusername="{% if last_username is defined %}{{ last_username ? last_username : '' }}{% endif %}"></div>
 {% endblock %}

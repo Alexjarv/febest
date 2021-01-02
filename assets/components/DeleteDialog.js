@@ -16,17 +16,29 @@ function DeleteDialog(props) {
 
     return (
         <Dialog onClose={hide} fullWidth={true} maxWidth='sm' open={props.open}>
-            <DialogTitle>Are you sure you wish to delete this post?</DialogTitle>
-            <DialogContent>
-                {props.post.title}
-            </DialogContent>
+            {props.post ?
+                <DialogTitle>Are you sure you wish to delete this post?</DialogTitle>
+                :
+                <DialogTitle>Are you sure you wish to delete this comment?</DialogTitle>
+            }
+
+            {props.post &&
+                <DialogContent>
+                    {props.post.title}
+                </DialogContent>
+            }
+
             <DialogActions>
                 <Button onClick={hide}>Cancel</Button>
                 <Button onClick={() => {
-                    if(!props.isInside) {
-                        context.deletePost(props.post);
-                    } else {
-                        context.deletePost(props.post, props.isInside);
+                    if(props.post) {
+                        if (!props.isInside) {
+                            context.deletePost(props.post);
+                        } else {
+                            context.deletePost(props.post, props.isInside);
+                        }
+                    } else if (props.comment){
+                        context.deleteComment(props.comment);
                     }
                     hide();
                 }}>
@@ -44,6 +56,9 @@ DeleteDialog.propTypes = {
     post: PropTypes.shape({
         id: PropTypes.number.isRequired,
         title: PropTypes.string.isRequired,
+    }),
+    comment: PropTypes.shape({
+        id: PropTypes.number.isRequired
     })
 };
 

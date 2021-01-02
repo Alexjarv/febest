@@ -2,7 +2,7 @@ import React, {Fragment, useContext, useState} from 'react';
 import {BlogContext} from '../contexts/BlogContextProvider';
 import {
     Avatar,
-    Box, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Divider, Grid,
+    Box, Card, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Divider, Fade, Grid,
     IconButton, Link, ListItemIcon, ListItemText,
     makeStyles, Menu, MenuItem,
     Table,
@@ -55,6 +55,12 @@ const useStyles = makeStyles((theme) => ({
     right: {
         marginLeft: 'auto'
     },
+    top: {
+        marginTop: '10px'
+    },
+    chip: {
+        margin: '5px'
+    },
     expandOpen: {
         transform: 'rotate(180deg)',
     },
@@ -94,18 +100,12 @@ export default function Post() {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [postToBeDeleted, setPostToBeDeleted] = useState(null);
+    const [OpenedMenuId, setOpenedMenuId] = React.useState(null);
     const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     const handleClose = () => {
         setAnchorEl(null);
-    };
-
-    const onCreateSubmit = (event) => {
-        event.preventDefault();
+        setOpenedMenuId(null);
     };
 
     const onEditSubmit = (postId, event) => {
@@ -123,57 +123,80 @@ export default function Post() {
                                 </Avatar>
                             }
                             action={
-                                <Box>
-                                    <IconButton aria-controls="settings" aria-haspopup="true" onClick={handleClick}>
-                                        <MoreVertIcon/>
-                                    </IconButton>
-                                    <Menu
-                                        id="menu"
-                                        anchorEl={anchorEl}
-                                        keepMounted
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    >
-                                        <MenuItem onClick={handleClose}>
-                                            <ListItemIcon>
-                                                <EditIcon/>
-                                            </ListItemIcon>
-                                            <ListItemText primary="Edit" />
-                                        </MenuItem>
-                                        <MenuItem onClick={() => {
-                                            setDeleteConfirmationIsShown(true);
-                                            setPostToBeDeleted(context.post);
-                                            handleClose();
-                                        }}>
-                                            <ListItemIcon>
-                                                <DeleteIcon/>
-                                            </ListItemIcon>
-                                            <ListItemText primary="Delete" />
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
+                                //If you are an admin you will see the corner menu
+                                {... (context.user.isSuperuser === 1 ?
+                                        <Box>
+                                            <IconButton aria-controls="settings" aria-haspopup="true" onClick={(event) => {
+                                                if(OpenedMenuId !== context.post.id){
+                                                    setOpenedMenuId(context.post.id);
+                                                } else {
+                                                    setOpenedMenuId(null);
+                                                }
+                                                setAnchorEl(event.currentTarget);
+                                            }}>
+                                                <MoreVertIcon/>
+                                            </IconButton>
+                                            <Menu
+                                                id={`menu-01`}
+                                                anchorEl={anchorEl}
+                                                keepMounted
+                                                open={OpenedMenuId === context.post.id}
+                                                onClose={handleClose}
+                                                TransitionComponent={Fade}
+                                            >
+                                                <MenuItem id={`MenuItem1-01`} onClick={() => {
+                                                    window.location.href = '/article/edit/' + context.post.slug;
+                                                    setAnchorEl(null);
+                                                    setOpenedMenuId(null);
+                                                }}
+                                                >
+                                                    <ListItemIcon>
+                                                        <EditIcon/>
+                                                    </ListItemIcon>
+                                                    <ListItemText primary="Edit" />
+                                                </MenuItem>
+                                                <MenuItem id={`MenuItem2-01`} onClick={() => {
+                                                    setDeleteConfirmationIsShown(true);
+                                                    setPostToBeDeleted(context.post);
+                                                    setAnchorEl(null);
+                                                    setOpenedMenuId(null);
+                                                }}>
+                                                    <ListItemIcon>
+                                                        <DeleteIcon/>
+                                                    </ListItemIcon>
+                                                    <ListItemText primary="Delete" />
+                                                </MenuItem>
+                                            </Menu>
+                                        </Box>
+                                        : <Box></Box>)}
                             }
                             titleTypographyProps={{variant:'h5' }}
                             title={<NavLink to={`/article/${context.post.slug}`}>{context.post.title}</NavLink>}
-
                             subheader={context.post.created_at}
+                        />
+                        <CardMedia
+                            className={classes.media}
+                            image="https://images.pexels.com/photos/2127733/pexels-photo-2127733.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+                            title="Car"
                         />
                         <CardContent>
                             <Typography variant="body2" component="p">
                                 {context.post.content}
                             </Typography>
+                            <Typography className={classes.top} variant="body2" component="p">
+                                {context.postCategories.slice().reverse().map((category, index) => (
+                                    <Chip className={classes.chip} label={`${category}`} />
+                                ))}
+                            </Typography>
                         </CardContent>
                         <CardActions disableSpacing>
                             <IconButton aria-label="add to favorites">
-                                {context.post.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.likes}</Box>}
                                 <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
+                                {context.post.likes !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.likes}</Box>}
                             </IconButton>
                             <IconButton aria-label="comment">
-                                {context.post.comments !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.comments}</Box>}
                                 <Link className={classes.flex} color="inherit" href={`/article/${context.post.slug}`}><CommentIcon /></Link>
-                            </IconButton>
-                            <IconButton className={classes.right}>
-                                <ExpandMoreIcon/>
+                                {context.post.comments !== 0 && <Box className={classes.IconNumber} component="div" m={1}>{context.post.comments}</Box>}
                             </IconButton>
                         </CardActions>
                     </Card>

@@ -3,8 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\PostCategory;
+use App\Entity\PostLike;
 use App\Entity\User;
 use App\Form\PostType;
+use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
+use App\Repository\PostCategoryRepository;
+use App\Repository\PostLikeRepository;
 use App\Repository\PostRepository;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -24,11 +30,19 @@ class PostsController extends AbstractController
 
     private $entityManager;
     private $postRepository;
+    private $categoryRepository;
+    private $commentRepository;
+    private $likeRepository;
+    private $postCategoriesRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, PostRepository $postRepository)
+    public function __construct(EntityManagerInterface $entityManager, PostRepository $postRepository, CategoryRepository $categoryRepository, PostCategoryRepository $postCategoriesRepository, CommentRepository $commentRepository, PostLikeRepository $likeRepository)
     {
         $this->entityManager = $entityManager;
         $this->postRepository = $postRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->postCategoriesRepository = $postCategoriesRepository;
+        $this->likeRepository = $likeRepository;
+        $this->commentRepository = $commentRepository;
     }
 
     /**
@@ -58,20 +72,51 @@ class PostsController extends AbstractController
     }
 
     /**
-     * @Route("/search", name="api_posts_search", methods={"GET"})
-     * @param Request $request
+     * @Route("/readCategory/{slug}", name="api_post_category_read", methods={"GET"})
+     * @param $slug
      * @return JsonResponse
      */
-    public function search(Request $request): JsonResponse
+    public function readCategory($slug): JsonResponse
     {
-        $content = json_decode($request->getContent());
+        $category = $this->categoryRepository->findOneBy(['slug' => $slug]);
+        $postCategories = $this->postCategoriesRepository->findBy(['category_id' => $category->getId()]);
+        $posts = [];
+        foreach($postCategories as $postCategory){
+            $post = $this->postRepository->findOneBy(['id' => $postCategory->getPostId()]);
+            $posts[] = $post->toArray();
+        }
 
-        $result = $this->postRepository->createQueryBuilder('a')
-            ->where('a.title LIKE :title')
-            ->setParameter('title', '%'.$content->content.'%')
+        return $this->json($posts);
+    }
+
+    /**
+     * @Route("/search/{data}", name="api_posts_search", methods={"GET"})
+     * @param $data
+     * @return JsonResponse
+     */
+    public function search($data): JsonResponse
+    {
+        $query = $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from('Post:post', 'p')
+            ->where('p.title LIKE :title')
+            ->setParameter('title', '%'.$data.'%')
+            ->orWhere('p.content LIKE :content')
+            ->setParameter('content', '%'.$data.'%')
+            ->orderBy('p.name', 'ASC')
             ->getQuery();
 
-        return $this->json($result);
+        $query = $this->entityManager->createQuery(
+            'SELECT p
+            FROM App\Entity\Post p
+            WHERE p.title LIKE :title
+            OR p.content LIKE :content
+            ORDER BY p.created_at DESC'
+        )->setParameter('title', '%'.$data.'%')->setParameter('content', '%'.$data.'%');
+
+        $array = $query->getArrayResult();
+
+        return $this->json($array);
     }
 
     /**
@@ -135,6 +180,34 @@ class PostsController extends AbstractController
             ]);
 
         }
+
+        if($content->categories){
+            foreach($content->categories as $id => $state){
+
+                if($state === true){
+                    $postCategory = new PostCategory();
+                    $postCategory->setPostId($post->getId());
+                    $postCategory->setCategoryId($id);
+                    $postCategory->setCreatedAt(new DateTime());
+
+                    try {
+                        $this->entityManager->persist($postCategory);
+                        $this->entityManager->flush();
+                    } catch (UniqueConstraintViolationException $exception) {
+                        return $this->json([
+                            'message' => ['text' => 'Category has to be unique!', 'level' => 'error']
+                        ]);
+                    }
+
+                    $category = $this->categoryRepository->findOneBy(['id' => $id]);
+                    $category->setCount(
+                        $category->getCount() + 1
+                    );
+                    $this->entityManager->flush();
+                }
+            }
+        }
+
         return $this->json([
             'post'    => $post->toArray(),
             'message' => ['text' => 'Post has been created!', 'level' => 'success']
@@ -150,23 +223,6 @@ class PostsController extends AbstractController
     public function update(Request $request, Post $post): JsonResponse
     {
         $content = json_decode($request->getContent());
-
-        $form = $this->createForm(PostType::class);
-        $nonObject = (array)$content;
-        unset($nonObject['id']);
-        $form->submit($nonObject);
-
-
-        if (!$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true, true) as $error) {
-                $propertyName = $error->getOrigin()->getName();
-                $errors[$propertyName] = $error->getMessage();
-            }
-            return $this->json([
-                'message' => ['text' => join("\n", $errors), 'level' => 'error'],
-            ]);
-        }
 
         if ($post->getTitle() === $content->title && $post->getContent() === $content->content) {
             return $this->json([
@@ -184,6 +240,9 @@ class PostsController extends AbstractController
             $excerpt = $excerpt . '...';
             $post->setExcerpt($excerpt);
         }
+        if(isset($content->categories)) {
+            $post->setCategories($content->categories);
+        }
 
         try {
             $this->entityManager->flush();
@@ -200,6 +259,52 @@ class PostsController extends AbstractController
     }
 
     /**
+     * @Route("/like/{id}", name="api_post_like", methods={"PUT"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function like($id): JsonResponse
+    {
+        $post = $this->postRepository->find($id);
+        $user = $this->getUser();
+        if(!isset($user)){
+            return $this->json([
+                'message' => ['text' => 'Please log-in to like posts!', 'level' => 'error']
+            ]);
+        }
+        $like = $this->likeRepository->findOneBy(['user_id' => $user->getId(), 'post_id' => $post->getId()]);
+
+        if(!isset($like)){
+            $like = new PostLike();
+            $like->setPostId($post->getId());
+            $like->setUserId($user->getId());
+            $like->setCreatedAt(new DateTime());
+            $this->entityManager->persist($like);
+            $post->setLikes(
+                $post->getLikes() + 1
+            );
+        } else {
+            $this->entityManager->remove($like);
+            $post->setLikes(
+                $post->getLikes() - 1
+            );
+        }
+
+        try {
+            $this->entityManager->flush();
+        } catch (Exception $exception) {
+            return $this->json([
+                'message' => ['text' => 'Could not reach database when attempting to update a post.', 'level' => 'error']
+            ]);
+        }
+
+        return $this->json([
+            'post' => $post->toArray(),
+            'message' => ['text' => 'Post liked!', 'level' => 'success']
+        ]);
+    }
+
+    /**
      * @Route("/delete/{id}", name="api_post_delete", methods={"DELETE"})
      * @param int $id
      * @return JsonResponse
@@ -208,6 +313,10 @@ class PostsController extends AbstractController
     {
 
         $post = $this->postRepository->find($id);
+        $comments = $this->commentRepository->findBy(['post_id' => $post->getId()]);
+        foreach ($comments as $comment){
+            $this->entityManager->remove($comment);
+        }
 
         try {
             $this->entityManager->remove($post);

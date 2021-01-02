@@ -27,6 +27,12 @@ class Category
      */
     private $count;
 
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $slug;
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -67,6 +73,18 @@ class Category
     public function setCount(?int $count): self
     {
         $this->count = $count;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -113,6 +131,7 @@ class Category
             'id' => $this->id,
             'title' => $this->title,
             'count' => $this->count,
+            'slug' => $this->slug,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

@@ -29,33 +29,26 @@ const MarginDivider = withStyles({
 export default function Sidebar() {
 
     const context = useContext(BlogContext);
-
     const classes = useStyles();
-
-    const onCreateSubmit = (event) => {
-        event.preventDefault();
-    };
-
-    const onEditSubmit = (postId, event) => {
-        event.preventDefault();
-    };
-
 
     return (
         <Grid item xs={12} md={4}>
-            <Grid container spacing={1}>
-                <Grid item xs={12}>
-                    <Button fullWidth variant="contained" color="primary" href="/article/new">
-                        Add Post
-                    </Button>
+            {context.user.isSuperuser ?
+                <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                        <Button fullWidth variant="contained" color="primary" href="/article/new">
+                            Add Post
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
+                : ""
+            }
             <MarginDivider/>
             <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
                 Categories
             </Typography>
             {context.categories.slice().reverse().map((category) => (
-                <Link display="block" variant="body1" href={category.url} key={category.title}>
+                <Link display="block" variant="body1" href={`/category/${category.slug}`} key={category.title}>
                     {category.title}
                     <Box component="span" m={1} display="inline-block" color="lightgrey">
                         {category.count}

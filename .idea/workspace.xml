@@ -5,10 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6424f8f2-453d-449d-aaa8-b0365a82f176" name="Default Changelist" comment="signup">
+      <change afterPath="$PROJECT_DIR$/assets/components/AppSnackbar.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/components/Navigation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c92e5e43-b096-4810-8b1f-2c5984061de0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c92e5e43-b096-4810-8b1f-2c5984061de0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Comments.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Comments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/DeleteDialog.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/DeleteDialog.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/NewPost.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/NewPost.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Post.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Post.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/components/Posts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Posts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Router.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Router.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/Sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/Sidebar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/SignIn.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/SignIn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/components/SignUp.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/components/SignUp.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/contexts/BlogContextProvider.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/contexts/BlogContextProvider.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/contexts/CommentsContextProvider.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/styles/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/styles/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/CategoriesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CategoriesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/PostsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PostsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/SecurityController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/SecurityController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Category.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Category.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Comment.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Comment.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Post.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Post.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/PostCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/PostCategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Form/PostType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Form/PostType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Security/UserAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/UserAuthenticator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index/index.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +194,10 @@
       <workItem from="1608898709571" duration="46061000" />
       <workItem from="1609026104427" duration="35000" />
       <workItem from="1609030155673" duration="595000" />
-      <workItem from="1609086289980" duration="34767000" />
+      <workItem from="1609086289980" duration="36373000" />
+      <workItem from="1609251584123" duration="168000" />
+      <workItem from="1609251762427" duration="26465000" />
+      <workItem from="1609430297693" duration="27468000" />
     </task>
     <task id="LOCAL-00001" summary="posts list">
       <created>1608947130298</created>
@@ -232,7 +262,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609211070527</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="signup">
+      <created>1609211702239</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1609211702239</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -77,22 +77,32 @@ export default function Posts() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [OpenedMenuId, setOpenedMenuId] = React.useState(null);
     const [postToBeDeleted, setPostToBeDeleted] = useState(null);
+    let [TimeOut] = useState(0);
     const [SearchContent, setSearchContent] = useState(null);
     const [expanded, setExpanded] = React.useState(false);
     const [expandedId, setExpandedId] = React.useState(null);
+
 
     const handleClose = () => {
         setAnchorEl(null);
         setOpenedMenuId(null);
     };
 
-    const handleSearch = () => {
-        if(SearchContent === ''){
-            context.readPosts();
-        } else {
-            context.searchPosts({content: SearchContent});
-        }
+    const onPostLike = (event, post_id) => {
+        event.preventDefault();
+        context.likePost({id: post_id});
+    };
 
+    const handleSearch = () => {
+        if(TimeOut) clearTimeout(TimeOut);
+        TimeOut = setTimeout(() => {
+            //search function
+            if(SearchContent !== ''){
+                context.searchPosts({content: SearchContent});
+            } else {
+                context.readPosts();
+            }
+        }, 300);
     };
 
     const onEditSubmit = (postId, event) => {
@@ -108,7 +118,7 @@ export default function Posts() {
                     fullWidth
                     onChange={(event) => {
                         setSearchContent(event.target.value);
-                        handleSearch
+                        handleSearch();
                     }}
                     variant="outlined"
                     margin="normal"
@@ -125,7 +135,10 @@ export default function Posts() {
                                         F
                                     </Avatar>
                                 }
+
                                 action={
+                                    //If you are an admin you will see the corner menu
+                                    {... (context.user.isSuperuser === 1 ?
                                     <Box>
                                         <IconButton aria-controls="settings" aria-haspopup="true" onClick={(event) => {
                                             if(OpenedMenuId !== post.id){
@@ -145,7 +158,11 @@ export default function Posts() {
                                         onClose={handleClose}
                                         TransitionComponent={Fade}
                                         >
-                                            <MenuItem id={`MenuItem1-${index}`} onClick={handleClose}>
+                                            <MenuItem id={`MenuItem1-${index}`} onClick={() => {
+                                                window.location.href = '/article/edit/'+post.slug;
+                                                setAnchorEl(null);
+                                                setOpenedMenuId(null);
+                                            }}>
                                                 <ListItemIcon>
                                                     <EditIcon/>
                                                 </ListItemIcon>
@@ -164,6 +181,7 @@ export default function Posts() {
                                             </MenuItem>
                                         </Menu>
                                     </Box>
+                                            : <Box></Box>)}
                                 }
                                 titleTypographyProps={{variant:'h6' }}
                                 title={<NavLink to={`/article/${post.slug}`}>{post.title}</NavLink>}
@@ -172,8 +190,8 @@ export default function Posts() {
                             />
                             <CardMedia
                                 className={classes.media}
-                                image="https://a.d-cd.net/iaAAAgDlb-A-480.jpg"
-                                title="Car bus"
+                                image="https://images.pexels.com/photos/2127733/pexels-photo-2127733.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+                                title="Car"
                             />
                             <CardContent>
                                 <Typography variant="body2" color="textSecondary" component="p">
@@ -181,13 +199,22 @@ export default function Posts() {
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
-                                <IconButton aria-label="add to favorites">
-                                    {post.likes !== 0 && <Box className={classes.IconNumber} component="span" m={1}>{post.likes}</Box>}
-                                    <Link className={classes.flex} color="inherit"><FavoriteIcon /></Link>
+                                <IconButton aria-label="add to favorites" onClick={(event) => {
+                                    onPostLike(event, post.id);
+                                }}>
+                                    <Link
+                                        className={classes.flex}
+                                        color="inherit"
+                                    ><FavoriteIcon /></Link>
+                                    {post.likes !== 0 &&
+                                        <Box className={classes.IconNumber} component="span" m={1}>
+                                            {post.likes}
+                                        </Box>
+                                    }
                                 </IconButton>
                                 <IconButton aria-label="comments">
-                                    {post.comments !== 0 && <Box className={classes.IconNumber} component="span" m={1}>{post.comments}</Box>}
                                     <Link className={classes.flex} color="inherit" href={`/article/${post.slug}`}><CommentIcon /></Link>
+                                    {post.comments !== 0 && <Box className={classes.IconNumber} component="span" m={1}>{post.comments}</Box>}
                                 </IconButton>
                                 <IconButton
                                     className={clsx(classes.expand, {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,19 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -49,6 +37,19 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn() {
     const classes = useStyles();
 
+    const [addUsername, setAddUsername] = useState('');
+    const [addPassword, setAddPassword] = useState('');
+
+    const onCreateSubmit = (event) => {
+        event.preventDefault();
+        axios.post('/login', {username: addUsername, password: addPassword})
+            .then(response => {
+                console.log(response);
+            }).catch(error => {
+            console.error(error);
+        });
+    };
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -59,16 +60,19 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form method="post" className={classes.form}>
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        onChange={(event) => {
+                            setAddUsername(event.target.value);
+                        }}
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
                         autoFocus
                     />
                     <TextField
@@ -76,6 +80,9 @@ export default function SignIn() {
                         margin="normal"
                         required
                         fullWidth
+                        onChange={(event) => {
+                            setAddPassword(event.target.value);
+                        }}
                         name="password"
                         label="Password"
                         type="password"
@@ -92,6 +99,7 @@ export default function SignIn() {
                         variant="contained"
                         color="primary"
                         className={classes.submit}
+
                     >
                         Sign In
                     </Button>
@@ -104,9 +112,6 @@ export default function SignIn() {
                     </Grid>
                 </form>
             </div>
-            <Box mt={8}>
-                <Copyright />
-            </Box>
         </Container>
     );
 }
